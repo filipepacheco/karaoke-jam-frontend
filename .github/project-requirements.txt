@@ -1,0 +1,255 @@
+1. Overview / Objective
+   Development of a responsive web application aimed at organizing in-person Jam Sessions and facilitating real-time management of performances, allowing musicians to register to play specific songs, and a coordinator (Host) to manage the entire event sequence in a simple way.
+   With this application it will be possible for:
+   The Host to register songs, define slots by musical specialty (vocal, guitar, etc.), approve or reject registrations, start and end songs, and change the order of the repertoire during the event.
+   Musicians will be able to register, indicate their specialties, choose songs to participate in, and follow the Jam's schedule in real time.
+   The audience will have access, through a dashboard projected on a screen or accessed via a link, to view the list of songs and the musicians scheduled.
+   The application works in real time based on instant communication technology ("sockets"), ensuring that any action taken by the Host is immediately reflected to all participants and viewers.
+
+The ultimate goal is to organize and streamline event jams, making sessions more dynamic and well-structured, without the need for spreadsheets or manual processes.
+
+2. Target Audience
+   Three main user profiles within an in-person jam session:
+
+Amateur musicians – who participate in events as a hobby and seek a practical way to organize themselves and interact with other musicians.
+
+Professional musicians – who perform regularly and can use the application to streamline the creation of repertoires in collaborative performances.
+
+Music students – who seek opportunities to practice and play together, having a clear view of the songs and available functions.
+
+In addition to musicians, the system also serves the audience present at events, who can view the list of songs and musicians scheduled through public panels projected on screens or accessible via link, providing greater engagement and monitoring of the jam.
+
+3. Functional Scope (MVP)
+   The application will include, in its first version, the following functionalities:
+
+For the Host
+
+Creation of a Jam, with definition of date, name and status control (planned, in progress, completed).
+Registration of songs with title, author, duration and demand for slots by specialty.
+Ability to approve or reject musician registrations for each song role.
+Change the order of songs in the queue at any time during the event.
+Start and end songs, with immediate updates for all users.
+Change the musician schedule even during a Jam.
+Restricted screen with visualization of all available, future and past jams, and with sharing links for each one.
+
+For the Musicians
+
+Quick registration with name, specialty and contact information, receiving a unique identification.
+Choice of available songs for participation, respecting the limit of slots per specialty.
+Real-time monitoring of the Jam's schedule, highlighting its upcoming songs.
+
+Access to an individual dashboard with participation history.
+For the Public
+Viewing, on a public panel (dashboard), of the complete list of upcoming songs, currently playing music, and scheduled musicians.
+Access to the panel via central screen or shared link, with real-time updates.
+General Features
+Automatic control of slots to avoid duplicate registrations or exceeding the limit.
+Instant updates via socket technology, eliminating the need to reload the page.
+Storage of jam history, songs, and participations for future reference.
+
+4. General Usage Flow
+   The application's operation during a Jam Session follows the sequence below:
+   Jam Preparation
+   The Host creates a new Jam in the application, defines its name, date, and registers the songs that will be played, indicating the slots by musical specialty (e.g., 2 guitars — 1 rhythm and 1 lead, 1 bass, 1 drums, etc.).
+   The host then shares the Jam's link/QR code with interested musicians.
+   Musician Registration
+   Musicians access the Jam via the link or QR code and complete a quick registration;
+
+Mobile phone number and name, which will be a unique piece of information.
+
+They choose the songs they wish to participate in from the available repertoire.
+The system registers the registration as "pending" and sends it for the Host's review.
+Host Approval
+The Host approves or rejects each registration, respecting the maximum number of slots per specialty.
+Upon approval, the musician becomes part of the lineup for that song.
+Jam Execution
+The Host starts the jam.
+The Host begins a song (status "in progress"), which is immediately reflected on the public and individual dashboards.
+When the song ends, the Host ends the status of that song and prepares the next one, and may change the order if necessary.
+Required.
+
+Public Viewing
+A large screen or link displays the public panel with the order of songs, scheduled musicians, and real-time status.
+Musicians have access to their individual panel with upcoming performances and history.
+
+History and Closing
+After the event, the system records the history of songs performed and participations, allowing for future reference.
+
+Simplified Flowchart:
+
+[Host creates Jam]
+
+↓
+
+[Registers songs + slots]
+
+↓
+
+[Host generates QR Code]
+
+↓
+
+[Musician registers and chooses songs]
+
+↓
+
+[System registers registration]
+
+↓
+
+[Host approves/rejects participation]
+
+↓
+
+[Host starts song] ↔ [Dashboards update]
+
+↓
+
+[Host ends song]
+
+↓
+
+[Host ends Jam]
+
+↓
+
+[History recorded]
+
+5. Architecture and Technologies
+   Front-end (visual part)
+   Vite
+   React
+   TypeScript
+   TailwindCSS (or equivalent for responsive styling)
+   Back-end (system)
+   Node.js, TypeScript, NestJS (modular framework with WebSocket support)
+   Socket.IO (real-time communication)
+   Prisma ORM (interaction with database) Data)
+
+PostgreSQL (relational database)
+
+Infrastructure
+Back-end Hosting
+Railway (free initial plan, scalable as needed)
+Front-end Hosting
+Vercel (free initial plan for quick deployment and responsiveness)
+Database
+Supabase (free initial plan, compatible with PostgreSQL and integrated with Prisma)
+Domain
+Registro.br (.com.br), approximate cost of R$ 40.00 per year (~R$ 3.33 monthly) with SSL certificate included in the hosting.
+
+Infrastructure Justification
+The choice of Railway, Vercel, and Supabase is based on the possibility of starting the project without infrastructure costs, taking advantage of robust free plans for development phases and initial events.
+
+This approach reduces initial expenses, allowing the system to mature before migrating to larger-scale paid providers (such as AWS or Google Cloud) should demand increase.
+Possible future infrastructure costs
+The growth in system usage (increased number of simultaneous jams, larger volume of stored data, and need for optimized performance) may require migration to paid services. In this scenario, it is possible to estimate a monthly cost ranging from R$ 100.00 to R$ 450.00, considering dedicated hosting for back-end, front-end with a professional plan, scalable database, and advanced monitoring/logging tools. This investment ensures greater stability, specialized technical support, and the capacity to handle larger events.
+
+6. Data Modeling
+   The system will be structured from basic entities that represent the elements involved in a Jam:
+
+Jam
+Represents the event itself
+Contains information such as name, date, current state (planned, in progress, completed), and list of scheduled songs.
+Music
+Title
+Author
+Duration
+Requirements (bass, drums, etc.)
+Musician
+Name
+Main Specialty
+Secondary Specialties
+Phone Number
+For each jam, a musician can be associated with several songs
+Registration
+Jam
+Music
+Specialty
+Status
+Request made by the musician to participate in a specific song, awaiting approval or rejection by the Host.
+Scale
+Association between Jam, Songs and Musicians
+Approved association between musician and role in a specific song of the jam
+History
+Record of all songs performed and the musicians who participated, for future consultation and reference.
+
+These entities are related in a way that allows the system to maintain total control over registrations, approvals, song performance and history storage, ensuring organization and traceability.
+
+7. Sprint Schedule
+   Development will be organized in bi-weekly cycles (sprints), ensuring continuous progression and opportunities for review and adjustments.
+   Initial Forecast:
+
+Sprint 1 – Project Setup and Base
+Configuration of the development infrastructure.
+Implementation of the main entities in the backend. Initial structure of the responsive front-end.
+
+Sprint 2 – Host Module (Registration and Management of Songs/Jams)
+Create interface and logic for creating Jams.
+Registration of songs and definition of slots by specialty.
+Control of Jam status.
+
+Sprint 3 – Participant Module (Registration and Consultation)
+Quick registration of musicians.
+Selection of songs for participation.
+Sending registrations for Host approval.
+
+Sprint 4 – Approval and Dynamic Scheduling Module
+Approval/Rejection of registrations.
+Schedule changes during execution.
+Automatic control of slots by function.
+
+Sprint 5 – Real-Time Functionalities and Dashboards
+Communication via socket between host, participants, and audience.
+Public dashboard and individual dashboard.
+Instant updates and conflict prevention.
+
+Sprint 6 – History and Closure
+Automatic registration
+Participation history log.
+History consultation on the dashboard.
+Final adjustments and preparation for homologation.
+Sprint 7 – Testing and Homologation
+Testing with a pilot event.
+Corrections, optimizations, and delivery for production use.
+
+8. Development Costs
+   The project can be contracted in two investment modalities, allowing flexibility for the client according to their preference:
+   Modality 1 – Fixed Value per Project
+   Complete development according to the scope defined in the MVP.
+   Includes all functionalities, testing, homologation, and initial support.
+   Estimated timeframe: 13 to 14 weeks (approximately 3 and a half months).
+   Value: R$ XX.XXX,00 (to be defined according to final negotiation).
+
+Modality 2 – Value per Sprint
+Development divided into bi-weekly sprints, each with clear objectives and partial deliveries.
+Value per sprint: R$ X.XXX,00 (to be defined).
+
+Number of sprints planned: 7.
+Estimated total cost at the end of the project: R$ XX.XXX,00 (variable according to scope adjustments during development).
+
+Observations:
+Initial support is included in both modalities.
+Possible scope changes during development may impact the deadline and cost, and must be agreed upon in advance between the parties.
+
+9. Infrastructure Costs
+   The application can initially operate with low-cost infrastructure, taking advantage of robust free plans for the first events and initial usage phase.
+
+Here is the cost estimate:
+
+Initial Infrastructure (free plans)
+Backend Hosting: Railway – R$ 0/month
+Frontend Hosting: Vercel – R$ 0/month
+Database: Supabase – R$ 0/month
+Domain: Registro.br (.com.br) – R$ 40/year (~R$ 3.33/month)
+SSL Certificate: included in hosting
+Professional Infrastructure (future, when demand increases):
+Dedicated Backend Hosting: R$ 90 to R$ 150/month
+Pro Frontend Hosting: R$ 80/month
+Scalable Database: R$ 60/month
+Advanced Monitoring and Logs: R$ 50 to R$ 120/month
+Domain: R$ 40/year
+Estimated monthly total (initial): ~R$ 3.33
+Estimated annual total (initial): ~R$ 40.00
+Estimated total monthly (professional): ~R$ 100 to R$ 450
+Estimated total annual (professional): ~R$ 1,600 to R$ 5,400

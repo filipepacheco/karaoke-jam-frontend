@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: autumn --default;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
