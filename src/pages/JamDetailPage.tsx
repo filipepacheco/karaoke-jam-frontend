@@ -4,12 +4,11 @@
  */
 
 import {useNavigate, useParams} from 'react-router-dom'
-import {useAuth, useJam} from '../hooks'
+import {useAuth} from '../hooks'
 import {ErrorAlert, ScheduleDisplayItem, ScheduleEnrollmentModal} from '../components'
-import {scheduleService} from '../services/scheduleService'
-import {musicService} from '../services/musicService'
-import type {MusicResponseDto, ScheduleResponseDto} from "../types/api.types.ts";
-import {useState} from "react";
+import {jamService, musicService, scheduleService} from '../services'
+import type {JamResponseDto, MusicResponseDto, ScheduleResponseDto} from "../types/api.types.ts";
+import {useEffect, useState} from "react";
 import {getStatusIcon, getStatusLabel} from "../components/schedule/ScheduleDisplayItem.tsx";
 import {getInstrumentIcon} from "../components/schedule/RegistrationList.tsx";
 
@@ -17,7 +16,9 @@ export function JamDetailPage() {
     const {jamId} = useParams<{ jamId: string }>()
     const navigate = useNavigate()
     const {isAuthenticated, user} = useAuth()
-    const {data: jam, loading, error, refetch} = useJam(jamId || '')
+    const [jam, setJam] = useState<JamResponseDto | null>(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     const [showSuggestModal, setShowSuggestModal] = useState(false)
     const [suggestLoading, setSuggestLoading] = useState(false)
@@ -28,6 +29,45 @@ export function JamDetailPage() {
 
     const [showEnrollModal, setShowEnrollModal] = useState(false)
     const [selectedScheduleForEnroll, setSelectedScheduleForEnroll] = useState<ScheduleResponseDto | null>(null)
+    const [enrollSuccess, setEnrollSuccess] = useState<string | null>(null)
+
+    useEffect(() => {
+        if (jamId) {
+            loadJamData(jamId)
+        }
+    }, [jamId, navigate])
+
+    const loadJamData = async (id: string) => {
+        setLoading(true)
+        setError(null)
+        try {
+            const result = await jamService.findOne(id)
+            setJam(result.data)
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to load jam'
+            setError(errorMessage)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    // Handle enrollment success - reload jam data from API
+    const handleEnrollmentSuccess = async () => {
+        // Close modal immediately for better UX
+        setShowEnrollModal(false)
+        setSelectedScheduleForEnroll(null)
+
+        // Show success toast briefly
+        setEnrollSuccess('✅ Successfully enrolled!')
+
+        // Reload jam data from API to get the latest state
+        if (jamId) {
+            loadJamData(jamId)
+        }
+
+        // Clear success message after 2 seconds
+        setTimeout(() => setEnrollSuccess(null), 2000)
+    }
 
     // Check if current user is already registered in this jam
     const userRegistration = jam?.registrations?.find((reg) => reg.musician?.contact === user?.contact || reg.musician?.id === user?.id)
@@ -74,10 +114,7 @@ export function JamDetailPage() {
             setSelectedSongId('')
             setShowSuggestModal(false)
 
-            // Refetch jam data to show new schedule
-            setTimeout(() => {
-                refetch?.()
-            }, 1000)
+            loadJamData(jamId)
         } catch (err) {
             setSuggestError(err instanceof Error ? err.message : 'Failed to suggest song')
         } finally {
@@ -85,7 +122,7 @@ export function JamDetailPage() {
         }
     }
 
-    if (loading) {
+    if (loading  && !jam) {
         return (<div className="min-h-screen flex items-center justify-center bg-base-100">
             <div className="loading loading-spinner loading-lg"></div>
         </div>)
@@ -103,12 +140,24 @@ export function JamDetailPage() {
     }
 
     return (<div className="min-h-screen bg-base-100">
-        {/* Success Alert at Top */}
+        {/* Success Alert at Top - for Suggest */}
         {suggestSuccess && (
             <div className="bg-success text-success-content sticky top-0 z-50">
                 <div className="container mx-auto max-w-4xl px-4 py-3 flex items-center justify-center gap-4">
                     <p className="font-semibold text-center flex-1">{suggestSuccess}</p>
                     <button onClick={() => setSuggestSuccess(null)} className="btn btn-ghost btn-sm flex-shrink-0">✕</button>
+                </div>
+            </div>
+        )}
+
+        {/* Success Alert at Top - for Enrollment */}
+        {enrollSuccess && (
+            <div className="bg-info text-info-content sticky top-0 z-50">
+                <div className="container mx-auto max-w-4xl px-4 py-3 flex items-center justify-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <span className="loading loading-spinner loading-sm"></span>
+                        <p className="font-semibold">{enrollSuccess}</p>
+                    </div>
                 </div>
             </div>
         )}
@@ -341,7 +390,7 @@ export function JamDetailPage() {
                 setShowEnrollModal(false)
                 setSelectedScheduleForEnroll(null)
             }}
-            onSuccess={() => refetch?.()}
+            onSuccess={handleEnrollmentSuccess}
         />)}
 
         {/* Suggest Song Modal */}

@@ -56,6 +56,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(syncResult.token)
       localStorage.setItem('auth_user', JSON.stringify(syncResult.user))
 
+      if (import.meta.env.DEV) {
+        console.log('✅ Token stored successfully:', syncResult.token ? `${syncResult.token.substring(0, 20)}...` : 'NO TOKEN')
+        console.log('✅ User authenticated:', syncResult.user.email)
+      }
+
       // Update state
       setUser(syncResult.user)
       setRoleState(syncResult.user.role)

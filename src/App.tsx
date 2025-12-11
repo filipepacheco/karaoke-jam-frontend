@@ -31,6 +31,8 @@ import {HostDashboardPage} from './pages/HostDashboardPage'
 import {CreateJamPage} from './pages/CreateJamPage'
 import {JamManagementPage} from './pages/JamManagementPage'
 import {MusicPage} from './pages/MusicPage'
+import {MusiciansPage} from './pages/MusiciansPage'
+import {ProfilePage} from './pages/ProfilePage'
 
 import {AuthProvider} from './contexts/AuthContext'
 import {OnboardingModal} from "./components";
@@ -113,6 +115,18 @@ function AppContent() {
         <>
           <Navbar />
           <MusicPage />
+        </>
+      } />
+      <Route path="/profile" element={
+        <>
+          <Navbar />
+          <ProfilePage />
+        </>
+      } />
+      <Route path="/musicians" element={
+        <>
+          <Navbar />
+          <MusiciansPage />
         </>
       } />
       <Route path="/host/jams/:id/songs" element={

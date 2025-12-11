@@ -32,18 +32,34 @@ function truncate(text: string, maxLength: number): string {
 }
 
 /**
- * Get badge class based on jam status
+ * Get badge class based on jam status with friendly styling
  */
 function getStatusBadgeClass(status: JamStatus): string {
   switch (status) {
     case 'ACTIVE':
-      return 'badge-success'
+      return 'badge-success badge-lg font-semibold'
     case 'INACTIVE':
-      return 'badge-warning'
+      return 'badge-warning badge-lg font-semibold'
     case 'FINISHED':
-      return 'badge-neutral'
+      return 'badge-info badge-lg font-semibold'
     default:
-      return 'badge-ghost'
+      return 'badge-ghost badge-lg font-semibold'
+  }
+}
+
+/**
+ * Get friendly status label with emoji
+ */
+function getStatusLabel(status: JamStatus): string {
+  switch (status) {
+    case 'ACTIVE':
+      return '🎉 Live Now'
+    case 'INACTIVE':
+      return '⏸️ Coming Soon'
+    case 'FINISHED':
+      return '✅ Completed'
+    default:
+      return '❓ Unknown'
   }
 }
 
@@ -63,7 +79,7 @@ export function JamCard({ jam, isAuthenticated }: JamCardProps) {
         <div className="flex justify-between items-start gap-2">
           <h3 className="card-title text-lg">{jam.name || 'No name'}</h3>
           <div className={`badge ${getStatusBadgeClass(jam.status)}`}>
-            {jam.status || 'UNKNOWN'}
+            {getStatusLabel(jam.status)}
           </div>
         </div>
 
@@ -93,15 +109,6 @@ export function JamCard({ jam, isAuthenticated }: JamCardProps) {
           <Link to={`/jams/${jam.id}`} className="btn btn-primary btn-sm">
             View Details
           </Link>
-
-          {isAuthenticated && jam.status === 'ACTIVE' && (
-            <Link
-              to={`/jams/${jam.id}/register`}
-              className="btn btn-secondary btn-sm"
-            >
-              Join Jam
-            </Link>
-          )}
         </div>
       </div>
     </div>

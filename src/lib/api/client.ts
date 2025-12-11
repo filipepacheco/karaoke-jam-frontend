@@ -14,6 +14,8 @@ import type {ApiError, ApiResponse} from '../../types/api.types'
  */
 class ApiClient {
   private client: AxiosInstance
+  private isRefreshingToken = false
+  private refreshTokenPromise: Promise<string | null> | null = null
 
   constructor() {
     // Create axios instance with default config
@@ -70,6 +72,31 @@ class ApiClient {
   }
 
   /**
+   * Attempt to refresh the token from Supabase
+   */
+  private async refreshTokenFromSupabase(): Promise<string | null> {
+    try {
+      // Dynamically import Supabase to avoid circular dependencies
+      const supabaseModule = await import('../supabase')
+      const newToken = await (supabaseModule.refreshSupabaseSession as () => Promise<string | null>)()
+
+      if (newToken) {
+        const { setToken } = await import('../auth')
+        setToken(newToken)
+        if (import.meta.env.DEV) {
+          console.warn('🔄 Token refreshed from Supabase')
+        }
+        return newToken
+      }
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.error('❌ Token refresh failed:', err)
+      }
+    }
+    return null
+  }
+
+  /**
    * Setup request and response interceptors
    */
   private setupInterceptors(): void {
@@ -79,13 +106,20 @@ class ApiClient {
         // Get token from localStorage (set by AuthContext from Supabase or legacy auth)
         const token = localStorage.getItem('auth_token')
 
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`
+        if (import.meta.env.DEV) {
+          console.warn('🔵 API Request:', config.method?.toUpperCase(), config.url)
+          console.warn('🔐 Token from localStorage:', token ? `${token.substring(0, 20)}...` : 'NO TOKEN')
         }
 
-        // Log request in development
-        if (import.meta.env.DEV) {
-          console.log('🔵 API Request:', config.method?.toUpperCase(), config.url)
+        if (token && token.trim()) {
+          config.headers.Authorization = `Bearer ${token}`
+          if (import.meta.env.DEV) {
+            console.warn('✅ Authorization header set')
+          }
+        } else {
+          if (import.meta.env.DEV) {
+            console.warn('⚠️ No token found in localStorage - request will be sent without auth')
+          }
         }
 
         return config
@@ -101,14 +135,59 @@ class ApiClient {
       (response) => {
         // Log response in development
         if (import.meta.env.DEV) {
-          console.log('✅ API Response:', response.config.method?.toUpperCase(), response.config.url, response.status)
+          console.warn('✅ API Response:', response.config.method?.toUpperCase(), response.config.url, response.status)
         }
 
         // Transform response to standardized format
         return this.transformResponse(response)
       },
-      (error: AxiosError) => {
-        // Handle errors
+      async (error: AxiosError) => {
+        const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean }
+
+        // Handle 401 Unauthorized - try to refresh token and retry
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true
+
+          if (import.meta.env.DEV) {
+            console.warn('🔐 Unauthorized (401) - Attempting token refresh')
+          }
+
+          // Prevent multiple simultaneous refresh attempts
+          if (!this.isRefreshingToken) {
+            this.isRefreshingToken = true
+            this.refreshTokenPromise = this.refreshTokenFromSupabase()
+          }
+
+          // Wait for token refresh to complete
+          if (this.refreshTokenPromise) {
+            const newToken = await this.refreshTokenPromise
+            this.isRefreshingToken = false
+            this.refreshTokenPromise = null
+
+            if (newToken) {
+              // Retry original request with new token
+              originalRequest.headers = originalRequest.headers || {}
+              originalRequest.headers.Authorization = `Bearer ${newToken}`
+
+              if (import.meta.env.DEV) {
+                console.warn('🔄 Retrying request with refreshed token')
+              }
+
+              return this.client.request(originalRequest)
+            }
+          }
+
+          // Token refresh failed, redirect to login
+          if (import.meta.env.DEV) {
+            console.error('🔐 Token refresh failed - redirecting to login')
+          }
+          const { clearAuth } = await import('../auth')
+          clearAuth()
+          localStorage.removeItem('auth_user')
+          window.location.href = '/login'
+        }
+
+        // Handle other errors
         return this.handleError(error)
       }
     )

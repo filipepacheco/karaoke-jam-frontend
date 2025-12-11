@@ -1,6 +1,28 @@
 import heroImage from '../assets/Untitled.jpg'
+import {useNavigate} from 'react-router-dom'
+import {useAuth} from '../hooks'
 
 function Hero() {
+  const navigate = useNavigate()
+  const { isAuthenticated, user } = useAuth()
+
+  const handleStartJam = () => {
+    if (isAuthenticated && user?.isHost) {
+      navigate('/host/create-jam')
+    } else if (isAuthenticated) {
+      navigate('/host/dashboard')
+    } else {
+      navigate('/register')
+    }
+  }
+
+  const handleJoinMusician = () => {
+    if (isAuthenticated) {
+      navigate('/jams')
+    } else {
+      navigate('/register')
+    }
+  }
   return (
     <div
       className="hero min-h-screen relative overflow-hidden"
@@ -25,10 +47,16 @@ function Hero() {
             No more spreadsheets, just seamless jam sessions.
           </p>
           <div className="flex gap-4 justify-center lg:justify-start flex-wrap">
-            <button className="btn btn-primary btn-lg">
+            <button
+              onClick={handleStartJam}
+              className="btn btn-primary btn-lg"
+            >
               Start Your First Jam
             </button>
-            <button className="btn btn-outline btn-lg text-white border-white hover:bg-white hover:text-black">
+            <button
+              onClick={handleJoinMusician}
+              className="btn btn-outline btn-lg text-white border-white hover:bg-white hover:text-black"
+            >
               Join as Musician
             </button>
           </div>

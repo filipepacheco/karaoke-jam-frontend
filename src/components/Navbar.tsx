@@ -6,15 +6,22 @@
 import {useAuth} from '../hooks'
 import {getRoleLabel} from '../lib/auth'
 import {useNavigate} from 'react-router-dom'
+import {useState} from 'react'
 
 function Navbar() {
   const navigate = useNavigate()
   const { isAuthenticated, user, role, logout, isUser, isViewer } = useAuth()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  const handleLogout = () => {
-    logout()
-    // Redirect to home after logout
-    navigate('/')
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      await logout()
+      // Redirect to home after logout
+      navigate('/')
+    } finally {
+      setIsLoggingOut(false)
+    }
   }
 
   return (
@@ -42,17 +49,11 @@ function Navbar() {
             {/* Mobile Menu Items */}
             <li><a href="/">Home</a></li>
             <li><a href="/jams">Browse Jams</a></li>
-            {!isViewer() && (
-              <>
-                <li><a href="/musicians">Musicians</a></li>
-                <li><a href="/music">Music Library</a></li>
-              </>
+            {user?.isHost && (
+              <li><a href="/musicians">Musicians</a></li>
             )}
-            {isUser() && (
-              <>
-                <li><a href="/my-registrations">My Registrations</a></li>
-                <li><a href="/my-performances">My Schedule</a></li>
-              </>
+            {!isViewer() && (
+              <li><a href="/music">Music Library</a></li>
             )}
             {user?.isHost && (
               <>
@@ -84,17 +85,11 @@ function Navbar() {
         <ul className="menu menu-horizontal px-1">
           <li><a href="/">Home</a></li>
           <li><a href="/jams">Jams</a></li>
-          {!isViewer() && (
-            <>
-              <li><a href="/musicians">Musicians</a></li>
-              <li><a href="/music">Music</a></li>
-            </>
+          {user?.isHost && (
+            <li><a href="/musicians">Musicians</a></li>
           )}
-          {isUser() && (
-            <>
-              <li><a href="/my-registrations">My Registrations</a></li>
-              <li><a href="/my-performances">My Schedule</a></li>
-            </>
+          {!isViewer() && (
+            <li><a href="/music">Music</a></li>
           )}
           {user?.isHost && (
             <li><a href="/host/dashboard">Host Dashboard</a></li>
@@ -134,13 +129,27 @@ function Navbar() {
                     <li><a href="/host/create-jam">Create Jam</a></li>
                   </>
                 )}
-                <li><a onClick={handleLogout}>Logout</a></li>
+                <li>
+                  <a
+                    onClick={handleLogout}
+                    className={isLoggingOut ? 'opacity-50 pointer-events-none' : ''}
+                  >
+                    {isLoggingOut ? (
+                      <>
+                        <span className="loading loading-spinner loading-sm"></span>
+                        Logging out...
+                      </>
+                    ) : (
+                      'Logout'
+                    )}
+                  </a>
+                </li>
               </>
             )}
             {!isAuthenticated && (
               <>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/register">Register</a></li>
+                <li className="disabled"><p>Hi, Guest user!</p></li>
+                <li><a href="/register">Login/Register</a></li>
               </>
             )}
           </ul>

@@ -182,10 +182,17 @@ export function SupabaseLoginForm({ onSuccess }: SupabaseLoginFormProps) {
         {/* Submit Button */}
         <button
           type="submit"
-          className={`btn btn-primary w-full ${isFormLoading ? 'loading' : ''}`}
+          className="btn btn-primary w-full"
           disabled={isFormLoading || !email || !password}
         >
-          {isFormLoading ? 'Please wait...' : isSignUp ? 'Create Account' : 'Sign In'}
+          {isFormLoading ? (
+            <>
+              <span className="loading loading-spinner loading-sm"></span>
+              {isSignUp ? 'Creating account...' : 'Signing in...'}
+            </>
+          ) : (
+            isSignUp ? 'Create Account' : 'Sign In'
+          )}
         </button>
 
           <div className="divider ">or</div>

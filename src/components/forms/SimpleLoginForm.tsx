@@ -3,11 +3,11 @@
  * Single input for email or phone login with smart post-login redirects
  */
 
-import { useState, useEffect } from 'react'
-import { useAuth } from '../../hooks'
-import { loginOrRegister } from '../../services'
-import { ErrorAlert } from '../index'
-import { useNavigate, useLocation } from 'react-router-dom'
+import {useState} from 'react'
+import {useAuth} from '../../hooks'
+import {loginOrRegister} from '../../services'
+import {ErrorAlert} from '../index'
+import {useLocation, useNavigate} from 'react-router-dom'
 
 export function SimpleLoginForm() {
   const navigate = useNavigate()
@@ -120,10 +120,17 @@ export function SimpleLoginForm() {
           {/* Submit Button */}
           <button
             type="submit"
-            className={`btn btn-primary w-full ${isLoading ? 'loading' : ''}`}
+            className="btn btn-primary w-full"
             disabled={isLoading || !input.trim()}
           >
-            {isLoading ? 'Logging in...' : 'Continue'}
+            {isLoading ? (
+              <>
+                <span className="loading loading-spinner loading-sm"></span>
+                Logging in...
+              </>
+            ) : (
+              'Continue'
+            )}
           </button>
         </form>
 

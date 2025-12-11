@@ -80,16 +80,37 @@ export function ScheduleEnrollmentModal({
     setError(null)
 
     try {
+      if (import.meta.env.DEV) {
+        console.log('📝 Attempting enrollment with:', {
+          musicianId: user.id,
+          scheduleId: schedule.id,
+          instrument: selectedInstrument,
+        })
+        const token = localStorage.getItem('auth_token')
+        console.log('🔐 Current auth token:', token ? `${token.substring(0, 20)}...` : 'NO TOKEN')
+      }
+
       await registrationService.create({
         musicianId: user.id,
         scheduleId: schedule.id,
         instrument: selectedInstrument,
       } as any)
 
+      if (import.meta.env.DEV) {
+        console.log('✅ Enrollment successful!')
+      }
+
       onClose()
       onSuccess()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to enroll')
+    } catch (err: any) {
+      if (import.meta.env.DEV) {
+        console.error('❌ Enrollment error:', err)
+        console.error('Error details:', {
+          message: err.message || 'Unknown error',
+          fullError: err,
+        })
+      }
+      setError(err.message || 'Failed to enroll')
     } finally {
       setEnrollLoading(false)
     }

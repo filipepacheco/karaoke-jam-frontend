@@ -99,9 +99,16 @@ export async function syncSupabaseUserToBackend(
       instrument: data.instrument,
     }
 
+    const finalToken = data.token || access_token
+
+    if (import.meta.env.DEV) {
+      console.log('✅ Backend sync successful')
+      console.log('Token returned from backend:', finalToken ? `${finalToken.substring(0, 20)}...` : 'NO TOKEN')
+    }
+
     return {
       user: authUser,
-      token: data.token || access_token,
+      token: finalToken,
       isNewUser: data.isNewUser,
     }
   } catch (err) {
