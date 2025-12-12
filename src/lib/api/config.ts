@@ -4,7 +4,7 @@
  */
 
 // Backend API base URL
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
+const API_BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
 
 /**
  * API Configuration object
@@ -80,11 +80,11 @@ export function getApiUrl(endpoint: string): string {
 
 /**
  * Validate that required environment variables are set
- * @throws Error if VITE_API_BASE_URL is invalid
+ * @throws Error if VITE_API_URL is invalid
  */
 export function validateEnvironment(): void {
   if (!API_CONFIG.baseURL) {
-    throw new Error('API_BASE_URL is not configured. Please set VITE_API_BASE_URL environment variable.')
+    throw new Error('API_BASE_URL is not configured. Please set VITE_API_URL environment variable.')
   }
 }
 
