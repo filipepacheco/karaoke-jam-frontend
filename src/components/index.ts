@@ -19,6 +19,10 @@ export {
 // Phase 4: Components
 export { JamContextDisplay } from './JamContextDisplay'
 export { JamCard } from './JamCard'
+export { JamCardSkeleton } from './JamCardSkeleton'
+export { PageHeaderSkeleton } from './PageHeaderSkeleton'
+export { ScheduleCardSkeleton } from './ScheduleCardSkeleton'
+export { SidebarSectionSkeleton } from './SidebarSectionSkeleton'
 
 // Music Components
 export { MusicTableRow, MusiciansBadges } from './MusicTable'
@@ -28,7 +32,7 @@ export { MusicEmptyState } from './MusicEmptyState'
 
 // Schedule Components
 export {
-  ScheduleCard,
+  ScheduleCardManagement,
   ScheduleStatusBadge,
   ScheduleActionButtons,
   SongInfo,
@@ -39,6 +43,7 @@ export {
 } from './schedule'
 export { SimpleLoginForm } from './forms/SimpleLoginForm'
 export { SupabaseLoginForm } from './forms/SupabaseLoginForm'
+export { OAuthButton } from './forms/OAuthButton'
 export { JamRegistrationForm } from './forms/JamRegistrationForm'
 export { OnboardingModal } from './OnboardingModal'
 export { ProfileSetupModal } from './ProfileSetupModal'

@@ -24,7 +24,7 @@ interface ScheduleCardProps {
   onAddMusician?: () => void
 }
 
-export function ScheduleCard({
+export function ScheduleCardManagement({
   schedule,
   index = 0,
   loading = false,
@@ -48,17 +48,17 @@ export function ScheduleCard({
                         : 'bg-base-200'
             }`}
         >
-            <div className="card-body p-4">
+            <div className="card-body p-2 sm:p-4">
                 {/* Schedule Header */}
-                <div className="flex items-start gap-3 ">
+                <div className="flex items-start gap-1 sm:gap-3 flex-wrap sm:flex-nowrap">
                     {/* Reorder Buttons (not shown for suggested) */}
                     {!isSuggested && (
                         <>
-                            <div className="flex flex-col gap-1 mt-auto mb-auto">
+                            <div className="flex flex-col gap-0.5 sm:gap-1 mt-auto mb-auto">
                                 <button
                                     onClick={() => onMoveUp?.(index)}
                                     disabled={index === 0 || loading}
-                                    className="btn btn-xs btn-ghost"
+                                    className="btn btn-xs btn-ghost text-xs"
                                     title="Move up"
                                 >
                                     ▲
@@ -66,7 +66,7 @@ export function ScheduleCard({
                                 <button
                                     onClick={() => onMoveDown?.(index)}
                                     disabled={index === maxIndex || loading}
-                                    className="btn btn-xs btn-ghost"
+                                    className="btn btn-xs btn-ghost text-xs"
                                     title="Move down"
                                 >
                                     ▼
@@ -74,7 +74,7 @@ export function ScheduleCard({
                             </div>
                             {/* Order Badge */}
                             <div
-                                className={`badge font-bold  text-lg px-4 py-5 my-1  mt-auto mb-auto ${
+                                className={`badge badge-sm sm:badge-md font-bold text-sm sm:text-lg px-2 sm:px-4 py-1 sm:py-5 mt-auto mb-auto ${
                                     isSuggested ? 'badge-info' : 'badge-info'
                                 }`}
                             >
@@ -85,8 +85,6 @@ export function ScheduleCard({
 
                     )}
 
-
-
                     {/* Song Info */}
                     <div className="flex-1 min-w-0 mt-auto mb-auto">
                         <SongInfo
@@ -95,7 +93,7 @@ export function ScheduleCard({
                     </div>
 
                     {/* Status Badge and Actions - Right side */}
-                    <div className="ml-auto flex flex-col gap-2 items-end">
+                    <div className="ml-auto flex flex-col gap-1 sm:gap-2 items-end">
                         <ScheduleStatusBadge status={schedule.status}/>
                         {isSuggested && (
                             <ScheduleActionButtons

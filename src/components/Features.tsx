@@ -32,9 +32,6 @@ function Features() {
                 Create jams, register songs with required slots, approve musician registrations,
                 and manage the setlist order in real-time during the event.
               </p>
-              <div className="card-actions justify-center mt-3 sm:mt-4">
-                <button className="btn btn-primary btn-xs sm:btn-sm">Learn More</button>
-              </div>
             </div>
           </div>
 
@@ -60,9 +57,6 @@ function Features() {
                 Register with your specialties, choose songs to participate in, and track your
                 upcoming performances on your personal dashboard with instant updates.
               </p>
-              <div className="card-actions justify-center mt-3 sm:mt-4">
-                <button className="btn btn-secondary btn-xs sm:btn-sm">Learn More</button>
-              </div>
             </div>
           </div>
 
@@ -88,9 +82,6 @@ function Features() {
                 View the complete lineup on public dashboards projected on screens or accessed
                 via link, with real-time updates as the jam progresses.
               </p>
-              <div className="card-actions justify-center mt-3 sm:mt-4">
-                <button className="btn btn-accent btn-xs sm:btn-sm">Learn More</button>
-              </div>
             </div>
           </div>
         </div>

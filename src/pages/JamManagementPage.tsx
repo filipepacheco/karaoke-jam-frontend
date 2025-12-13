@@ -9,7 +9,7 @@ import {useNavigate, useParams} from 'react-router-dom'
 import {useAuth} from '../hooks'
 import {jamService, registrationService, scheduleService} from '../services'
 import type {JamMusicResponseDto, JamResponseDto, ScheduleResponseDto} from '../types/api.types'
-import {ErrorAlert, ScheduleCard, SuccessAlert} from '../components'
+import {ErrorAlert, ScheduleCardManagement, SuccessAlert} from '../components'
 import {HostMusicianRegistrationModal} from '../components/schedule'
 
 type TabType = 'overview' | 'registrations' | 'schedule' | 'dashboard' | 'analytics'
@@ -92,7 +92,10 @@ export function JamManagementPage() {
     if (authLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-base-100">
-                <div className="loading loading-spinner loading-lg"></div>
+                <div className="flex flex-col items-center gap-3">
+                    <span className="loading loading-spinner loading-lg"></span>
+                    <span className="text-sm sm:text-base font-semibold text-base-content/70">Loading...</span>
+                </div>
             </div>
         )
     }
@@ -100,14 +103,17 @@ export function JamManagementPage() {
     if (loading && !jam) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-base-100">
-                <div className="loading loading-spinner loading-lg"></div>
+                <div className="flex flex-col items-center gap-3">
+                    <span className="loading loading-spinner loading-lg"></span>
+                    <span className="text-sm sm:text-base font-semibold text-base-content/70">Loading jam details...</span>
+                </div>
             </div>
         )
     }
 
     if (error && !jam) {
         return (
-            <div className="min-h-screen bg-base-100 p-4">
+            <div className="min-h-screen bg-base-100 px-2 sm:px-4 py-4 sm:py-8">
                 <div className="container mx-auto max-w-6xl">
                     <ErrorAlert message={error} title="Error Loading Jam"/>
                     <button onClick={() => navigate('/host/dashboard')} className="btn btn-primary mt-4">
@@ -147,24 +153,24 @@ export function JamManagementPage() {
         <div className="min-h-screen bg-base-100">
             {/* Header */}
             <div className="bg-base-200 border-b border-base-300">
-                <div className="container mx-auto max-w-6xl px-4 py-4">
+                <div className="container mx-auto max-w-6xl px-2 sm:px-4 py-3 sm:py-4">
                     {/* Breadcrumb */}
-                    <div className="text-sm breadcrumbs mb-2">
+                    <div className="text-xs sm:text-sm breadcrumbs mb-2">
                         <ul>
                             <li>
                                 <button onClick={() => navigate('/host/dashboard')} className="link link-hover">
                                     Dashboard
                                 </button>
                             </li>
-                            <li>{jam.name}</li>
+                            <li className="truncate">{jam.name}</li>
                             <li>Manage</li>
                         </ul>
                     </div>
 
                     {/* Title and Status */}
-                    <div className="flex items-center justify-between">
-                        <h1 className="text-3xl font-bold">🎭 {jam.name}</h1>
-                        <div className={`badge ${getStatusBadgeColor()} badge-lg`}>{jam.status}</div>
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">🎭 {jam.name}</h1>
+                        <div className={`badge badge-sm sm:badge-md lg:badge-lg ${getStatusBadgeColor()}`}>{jam.status}</div>
                     </div>
                 </div>
             </div>
@@ -172,15 +178,15 @@ export function JamManagementPage() {
 
             {/* Tab Navigation */}
             <div className="border-b border-base-300 bg-base-200">
-                <div className="container mx-auto max-w-6xl px-4">
-                    <div className="tabs tabs-boxed bg-transparent gap-2 py-2">
+                <div className="container mx-auto max-w-6xl px-2 sm:px-4">
+                    <div className="tabs tabs-boxed bg-transparent gap-1 sm:gap-2 py-2 text-xs sm:text-sm overflow-x-auto">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`tab ${activeTab === tab.id ? 'tab-active' : ''}`}
+                                className={`tab whitespace-nowrap ${activeTab === tab.id ? 'tab-active' : ''}`}
                             >
-                                <span className="mr-2">{tab.icon}</span>
+                                <span className="mr-1 sm:mr-2">{tab.icon}</span>
                                 {tab.label}
                             </button>
                         ))}
@@ -189,13 +195,13 @@ export function JamManagementPage() {
             </div>
 
             {/* Alerts */}
-            <div className="container sticky top-0 z-50 mx-auto max-w-6xl px-4 mt-4">
+            <div className="container sticky top-0 z-50 mx-auto max-w-6xl px-2 sm:px-4 mt-3 sm:mt-4">
                 {error && <ErrorAlert message={error} onDismiss={() => setError(null)}/>}
                 {success && <SuccessAlert message={success} onDismiss={() => setSuccess(null)}/>}
             </div>
 
             {/* Tab Content */}
-            <div className="container mx-auto max-w-8xl px-4 py-8">
+            <div className="container mx-auto max-w-6xl px-2 sm:px-4 py-4 sm:py-8">
                 {activeTab === 'overview' && (
                     <OverviewTab jam={jam} onStatusChange={handleStatusChange} loading={loading}/>
                 )}
@@ -232,29 +238,28 @@ function OverviewTab({
     jam.registrations?.forEach((reg) => uniqueMusicians.add(reg.musicianId))
 
     return (
-        <div className="space-y-6">
-
+        <div className="space-y-4 sm:space-y-6">
 
             {/* Quick Actions & Status Controls - Merged */}
             <div className="card bg-base-200 shadow-lg">
-                <div className="card-body">
-                    <h2 className="card-title">Actions & Controls</h2>
+                <div className="card-body p-3 sm:p-6">
+                    <h2 className="card-title text-base sm:text-lg">Actions & Controls</h2>
 
                     {/* Quick Actions Section */}
-                        <div className="flex flex-wrap gap-2 mb-4">
+                        <div className="flex flex-wrap gap-2 sm:gap-3 mb-3 sm:mb-4">
                             <button
                                 onClick={() => navigate(`/host/jams/${jam.id}/edit`)}
-                                className="btn btn-primary"
+                                className="btn btn-primary btn-xs sm:btn-sm"
                             >
                                 ✏️ Edit Jam
                             </button>
-                            <button onClick={() => navigate(`/jams/${jam.id}`)} className="btn btn-secondary">
+                            <button onClick={() => navigate(`/jams/${jam.id}`)} className="btn btn-secondary btn-xs sm:btn-sm">
                                 👁️ View Public Page
                             </button>
                             {jam.status === 'INACTIVE' && (
                                 <button
                                     onClick={() => onStatusChange('ACTIVE')}
-                                    className="btn btn-success"
+                                    className="btn btn-success btn-xs sm:btn-sm"
                                     disabled={loading}
                                 >
                                     ▶️ Start Jam
@@ -263,7 +268,7 @@ function OverviewTab({
                             {jam.status === 'ACTIVE' && (
                                 <button
                                     onClick={() => onStatusChange('FINISHED')}
-                                    className="btn btn-error"
+                                    className="btn btn-error btn-xs sm:btn-sm"
                                     disabled={loading}
                                 >
                                     ⏹️ End Jam
@@ -272,7 +277,7 @@ function OverviewTab({
                             {jam.status === 'FINISHED' && (
                                 <button
                                     onClick={() => onStatusChange('INACTIVE')}
-                                    className="btn btn-warning"
+                                    className="btn btn-warning btn-xs sm:btn-sm"
                                     disabled={loading}
                                 >
                                     🔄 Reactivate Jam
@@ -283,45 +288,45 @@ function OverviewTab({
             </div>
 
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="stats shadow bg-base-200">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                <div className="stats shadow bg-base-200 p-3 sm:p-6">
                     <div className="stat">
-                        <div className="stat-title">Performances</div>
-                        <div className="stat-value text-success">{jam.schedules?.length || 0}</div>
+                        <div className="stat-title text-xs sm:text-sm">Performances</div>
+                        <div className="stat-value text-success text-xl sm:text-2xl lg:text-3xl">{jam.schedules?.length || 0}</div>
                     </div>
                 </div>
-                <div className="stats shadow bg-base-200">
+                <div className="stats shadow bg-base-200 p-3 sm:p-6">
                     <div className="stat">
-                        <div className="stat-title">Registrations</div>
-                        <div className="stat-value text-accent">{jam.registrations?.length || 0}</div>
+                        <div className="stat-title text-xs sm:text-sm">Registrations</div>
+                        <div className="stat-value text-accent text-xl sm:text-2xl lg:text-3xl">{jam.registrations?.length || 0}</div>
                     </div>
                 </div>
-                <div className="stats shadow bg-base-200">
+                <div className="stats shadow bg-base-200 p-3 sm:p-6">
                     <div className="stat">
-                        <div className="stat-title">Musicians</div>
-                        <div className="stat-value text-secondary">{uniqueMusicians.size}</div>
+                        <div className="stat-title text-xs sm:text-sm">Musicians</div>
+                        <div className="stat-value text-secondary text-xl sm:text-2xl lg:text-3xl">{uniqueMusicians.size}</div>
                     </div>
                 </div>
             </div>
 
             {/* Jam Info Card */}
             <div className="card bg-base-200 shadow-lg">
-                <div className="card-body">
-                    <h2 className="card-title">Details</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="md:col-span-2">
-                            <p className="text-sm text-base-content/70">Description</p>
-                            <p className="font-semibold">{jam.description || 'No description'}</p>
+                <div className="card-body p-3 sm:p-6">
+                    <h2 className="card-title text-base sm:text-lg">Details</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div className="sm:col-span-2">
+                            <p className="text-xs sm:text-sm text-base-content/70">Description</p>
+                            <p className="font-semibold text-sm sm:text-base">{jam.description || 'No description'}</p>
                         </div>
                         <div>
-                            <p className="text-sm text-base-content/70">Date</p>
-                            <p className="font-semibold">
+                            <p className="text-xs sm:text-sm text-base-content/70">Date</p>
+                            <p className="font-semibold text-sm sm:text-base">
                                 {jam.date ? new Date(jam.date).toLocaleString() : 'Not set'}
                             </p>
                         </div>
                         <div>
-                            <p className="text-sm text-base-content/70">Host</p>
-                            <p className="font-semibold">{jam.hostName}</p>
+                            <p className="text-xs sm:text-sm text-base-content/70">Host</p>
+                            <p className="font-semibold text-sm sm:text-base">{jam.hostName}</p>
                         </div>
                     </div>
                 </div>
@@ -336,22 +341,22 @@ function OverviewTab({
  */
 function RegistrationsTab({jam}: { jam: JamResponseDto }) {
     return (
-        <div className="space-y-4">
-            <h2 className="text-2xl font-bold">👥 Registrations Management</h2>
+        <div className="space-y-3 sm:space-y-4">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">👥 Registrations Management</h2>
 
             {jam.registrations && jam.registrations.length > 0 ? (
-                <div className="space-y-2">
+                <div className="space-y-2 sm:space-y-3">
                     {jam.registrations.map((registration) => (
                         <div key={registration.id} className="card bg-base-200 shadow">
-                            <div className="card-body p-4">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <h3 className="font-semibold">{registration.musician?.name}</h3>
-                                        <p className="text-sm text-base-content/70">
+                            <div className="card-body p-3 sm:p-4">
+                                <div className="flex items-center justify-between gap-2 flex-wrap">
+                                    <div className="min-w-0">
+                                        <h3 className="font-semibold text-sm sm:text-base">{registration.musician?.name}</h3>
+                                        <p className="text-xs sm:text-sm text-base-content/70">
                                             {registration.musician?.instrument}
                                         </p>
                                     </div>
-                                    <div className="badge badge-outline">{registration.status}</div>
+                                    <div className="badge badge-outline badge-xs sm:badge-sm">{registration.status}</div>
                                 </div>
                             </div>
                         </div>
@@ -359,7 +364,7 @@ function RegistrationsTab({jam}: { jam: JamResponseDto }) {
                 </div>
             ) : (
                 <div className="alert">
-                    <p>No registrations yet.</p>
+                    <p className="text-sm">No registrations yet.</p>
                 </div>
             )}
         </div>
@@ -553,7 +558,7 @@ function ScheduleTab({jam, onReload}: { jam: JamResponseDto; onReload: () => voi
                         return nonSuggestedSchedules.length > 0 ? (
                             <div className="space-y-4">
                                 {nonSuggestedSchedules.map((schedule, index) => (
-                                    <ScheduleCard
+                                    <ScheduleCardManagement
                                         key={schedule.id}
                                         schedule={schedule}
                                         index={index}
@@ -582,7 +587,7 @@ function ScheduleTab({jam, onReload}: { jam: JamResponseDto; onReload: () => voi
                                     ✨ Suggested Songs (Pending Approval)
                                 </h3>
                                 {suggestedSchedules.map((schedule) => (
-                                    <ScheduleCard
+                                    <ScheduleCardManagement
                                         key={schedule.id}
                                         schedule={schedule}
                                         loading={loading}

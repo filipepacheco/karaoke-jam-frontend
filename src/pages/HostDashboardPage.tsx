@@ -122,21 +122,24 @@ export function HostDashboardPage() {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-base-100">
-        <div className="loading loading-spinner loading-lg"></div>
+        <div className="flex flex-col items-center gap-3">
+          <span className="loading loading-spinner loading-lg"></span>
+          <span className="text-sm sm:text-base font-semibold text-base-content/70">Loading...</span>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-base-100 p-4">
+    <div className="min-h-screen bg-base-100 px-2 sm:px-4 py-4 sm:py-8">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-4xl font-bold">🎭 Host Dashboard</h1>
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center justify-between gap-2 sm:gap-4 mb-4 sm:mb-6 flex-wrap">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">🎭 Host Dashboard</h1>
             <button
               onClick={() => navigate('/host/create-jam')}
-              className="btn btn-primary"
+              className="btn btn-primary btn-sm sm:btn-md"
               disabled={loading}
             >
               + Create New Jam
@@ -149,51 +152,54 @@ export function HostDashboardPage() {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="stats shadow bg-base-200">
-            <div className="stat">
-              <div className="stat-title">Total Jams</div>
-              <div className="stat-value text-primary">{stats.totalJams}</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="stats shadow bg-base-200 p-3 sm:p-6 w-full">
+            <div className="stat w-full">
+              <div className="stat-title text-xs sm:text-sm">Total Jams</div>
+              <div className="stat-value text-primary text-xl sm:text-2xl lg:text-3xl">{stats.totalJams}</div>
             </div>
           </div>
 
-          <div className="stats shadow bg-base-200">
-            <div className="stat">
-              <div className="stat-title">Musicians</div>
-              <div className="stat-value text-secondary">{stats.totalMusicians}</div>
+          <div className="stats shadow bg-base-200 p-3 sm:p-6 w-full">
+            <div className="stat w-full">
+              <div className="stat-title text-xs sm:text-sm">Musicians</div>
+              <div className="stat-value text-secondary text-xl sm:text-2xl lg:text-3xl">{stats.totalMusicians}</div>
             </div>
           </div>
 
-          <div className="stats shadow bg-base-200">
-            <div className="stat">
-              <div className="stat-title">Songs</div>
-              <div className="stat-value text-accent">{stats.totalSongs}</div>
+          <div className="stats shadow bg-base-200 p-3 sm:p-6 w-full">
+            <div className="stat w-full">
+              <div className="stat-title text-xs sm:text-sm">Songs</div>
+              <div className="stat-value text-accent text-xl sm:text-2xl lg:text-3xl">{stats.totalSongs}</div>
             </div>
           </div>
 
-          <div className="stats shadow bg-base-200">
-            <div className="stat">
-              <div className="stat-title">Upcoming</div>
-              <div className="stat-value text-success">{categories.planned.length}</div>
+          <div className="stats shadow bg-base-200 p-3 sm:p-6 w-full">
+            <div className="stat w-full">
+              <div className="stat-title text-xs sm:text-sm">Upcoming</div>
+              <div className="stat-value text-success text-xl sm:text-2xl lg:text-3xl">{categories.planned.length}</div>
             </div>
           </div>
         </div>
 
         {loading && jams.length === 0 ? (
-          <div className="flex justify-center py-12">
-            <span className="loading loading-spinner loading-lg" />
+          <div className="flex justify-center py-8 sm:py-12">
+            <div className="flex flex-col items-center gap-3">
+              <span className="loading loading-spinner loading-lg"></span>
+              <span className="text-sm sm:text-base font-semibold text-base-content/70">Loading jams...</span>
+            </div>
           </div>
         ) : jams.length === 0 ? (
-          <div className="alert alert-info mb-8">
-            <p>You haven't created any jams yet. Click "Create New Jam" to get started!</p>
+          <div className="alert alert-info mb-6 sm:mb-8">
+            <p className="text-sm sm:text-base">You haven't created any jams yet. Click "Create New Jam" to get started!</p>
           </div>
         ) : (
           <>
             {/* Planned Jams */}
             {categories.planned.length > 0 && (
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4">📅 Planned Jams</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">📅 Planned Jams</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                   {categories.planned.map((jam) => (
                     <JamCard
                       key={jam.id}
@@ -209,9 +215,9 @@ export function HostDashboardPage() {
 
             {/* In Progress Jams */}
             {categories.inProgress.length > 0 && (
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4">🎵 In Progress</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">🎵 In Progress</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                   {categories.inProgress.map((jam) => (
                     <JamCard
                       key={jam.id}
@@ -227,9 +233,9 @@ export function HostDashboardPage() {
 
             {/* Past Jams */}
             {categories.past.length > 0 && (
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4">✅ Past Jams</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">✅ Past Jams</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                   {categories.past.map((jam) => (
                     <JamCard
                       key={jam.id}
@@ -284,13 +290,13 @@ function JamCard({ jam, onDelete, onNavigate, loading }: JamCardProps) {
 
   return (
     <div className="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow">
-      <div className="card-body">
+      <div className="card-body p-3 sm:p-6">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="card-title text-lg">{jam.name}</h3>
-          <div className={`badge ${getStatusBadgeColor()}`}>{jam.status}</div>
+          <h3 className="card-title text-base sm:text-lg">{jam.name}</h3>
+          <div className={`badge badge-sm sm:badge-md ${getStatusBadgeColor()}`}>{jam.status}</div>
         </div>
 
-        <div className="space-y-2 text-sm">
+        <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
           {jam.date && (
             <p className="text-base-content/70">
               📅 {new Date(jam.date).toLocaleDateString()}
@@ -301,27 +307,27 @@ function JamCard({ jam, onDelete, onNavigate, loading }: JamCardProps) {
           )}
         </div>
 
-        <div className="flex gap-2 mt-4">
-          <span className="badge badge-outline">
+        <div className="flex gap-2 mt-3 sm:mt-4 flex-wrap">
+          <span className="badge badge-outline badge-xs sm:badge-sm">
             🎵 {songCount} songs
           </span>
-          <span className="badge badge-outline">
+          <span className="badge badge-outline badge-xs sm:badge-sm">
             👥 {musicianCount} musicians
           </span>
         </div>
 
-        <div className="card-actions justify-between mt-6">
-          <div className="flex gap-2">
+        <div className="card-actions justify-between mt-4 sm:mt-6 flex-wrap gap-2">
+          <div className="flex gap-1 sm:gap-2">
             <button
               onClick={() => onNavigate(`/jams/${jam.id}`)}
-              className="btn btn-sm btn-ghost"
+              className="btn btn-xs sm:btn-sm btn-ghost"
               disabled={loading}
             >
               View
             </button>
             <button
               onClick={() => onNavigate(`/host/jams/${jam.id}/manage`)}
-              className="btn btn-sm btn-primary"
+              className="btn btn-xs sm:btn-sm btn-primary"
               disabled={loading}
             >
               Manage
@@ -329,7 +335,7 @@ function JamCard({ jam, onDelete, onNavigate, loading }: JamCardProps) {
           </div>
           <button
             onClick={() => onDelete(jam.id)}
-            className="btn btn-sm btn-error btn-outline"
+            className="btn btn-xs sm:btn-sm btn-error btn-outline"
             disabled={loading}
           >
             Delete

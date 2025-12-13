@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (import.meta.env.DEV) {
         console.log('⏳ Sync already in progress, skipping duplicate call')
       }
-      return { success: true, error: 'Sync already in progress' }
+      return { success: true, error: 'Syncing in progress...' }
     }
 
     // Prevent duplicate syncs within 1 second

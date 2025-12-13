@@ -74,39 +74,39 @@ export function JamCard({ jam, isAuthenticated }: JamCardProps) {
 
   return (
     <div className="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow">
-      <div className="card-body">
+      <div className="card-body p-3 sm:p-6">
         {/* Header: Name + Status Badge */}
         <div className="flex justify-between items-start gap-2">
-          <h3 className="card-title text-lg">{jam.name || 'No name'}</h3>
-          <div className={`badge ${getStatusBadgeClass(jam.status)}`}>
+          <h3 className="card-title text-base sm:text-lg">{jam.name || 'No name'}</h3>
+          <div className={`badge badge-md sm:badge-lg ${getStatusBadgeClass(jam.status)}`}>
             {getStatusLabel(jam.status)}
           </div>
         </div>
 
         {/* Date */}
         {jam.date && (
-          <p className="text-sm text-base-content/70">
+          <p className="text-xs sm:text-sm text-base-content/70">
             📅 {formatDate(jam.date)}
           </p>
         )}
 
         {/* Description */}
         {jam.description && (
-          <p className="text-sm text-base-content/80 mt-2">
+          <p className="text-xs sm:text-sm text-base-content/80 mt-2">
             {truncate(jam.description, 100)}
           </p>
         )}
 
         {/* Song Count */}
         <div className="flex items-center gap-2 mt-2">
-          <div className="text-xs text-base-content/60">
+          <div className="text-xs sm:text-sm text-base-content/60">
             🎵 {songCount} {songCount === 1 ? 'song' : 'songs'}
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="card-actions justify-end mt-4">
-          <Link to={`/jams/${jam.id}`} className="btn btn-primary btn-sm">
+        <div className="card-actions justify-end mt-3 sm:mt-4">
+          <Link to={`/jams/${jam.id}`} className="btn btn-primary btn-xs sm:btn-sm text-xs sm:text-sm">
             View Details
           </Link>
         </div>

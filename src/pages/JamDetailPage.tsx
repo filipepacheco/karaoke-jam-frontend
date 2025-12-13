@@ -5,7 +5,14 @@
 
 import {useNavigate, useParams} from 'react-router-dom'
 import {useAuth} from '../hooks'
-import {ErrorAlert, ScheduleDisplayItem, ScheduleEnrollmentModal} from '../components'
+import {
+    ErrorAlert,
+    PageHeaderSkeleton,
+    ScheduleCardSkeleton,
+    ScheduleDisplayItem,
+    ScheduleEnrollmentModal,
+    SidebarSectionSkeleton
+} from '../components'
 import {jamService, musicService, scheduleService} from '../services'
 import type {JamResponseDto, MusicResponseDto, ScheduleResponseDto} from "../types/api.types.ts";
 import {useEffect, useState} from "react";
@@ -85,14 +92,19 @@ export function JamDetailPage() {
         if (!isAuthenticated) {
             navigate(`/login?redirect=/jams/${jamId}`)
         } else {
+            setShowSuggestModal(true)
+            setSuggestLoading(true)
+            setSuggestError(null)
+
             // Load all songs for the modal
             try {
                 const songs = await musicService.findAll()
                 setAllSongs(songs.data || [])
             } catch (err) {
                 setSuggestError('Failed to load songs')
+            } finally {
+                setSuggestLoading(false)
             }
-            setShowSuggestModal(true)
         }
     }
 
@@ -122,10 +134,37 @@ export function JamDetailPage() {
         }
     }
 
-    if (loading  && !jam) {
-        return (<div className="min-h-screen flex items-center justify-center bg-base-100">
-            <div className="loading loading-spinner loading-lg"></div>
-        </div>)
+    if (loading && !jam) {
+        return (
+            <div className="min-h-screen bg-base-100">
+                {/* Page Header Skeleton */}
+                <PageHeaderSkeleton />
+
+                {/* Loading Text and Spinner */}
+                <div className="container mx-auto max-w-4xl px-2 sm:px-4 py-6 sm:py-8">
+                    <div className="flex justify-center items-center gap-3 mb-8">
+                        <span className="loading loading-spinner loading-md sm:loading-lg"></span>
+                        <span className="font-semibold text-sm sm:text-base text-base-content/70">Loading jam details...</span>
+                    </div>
+
+                    {/* Main Content Skeleton */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                        {/* Main Content Skeletons */}
+                        <div className="md:col-span-2 lg:col-span-3 space-y-4 sm:space-y-6 order-2 md:order-1">
+                            <ScheduleCardSkeleton />
+                            <ScheduleCardSkeleton />
+                        </div>
+
+                        {/* Sidebar Skeletons */}
+                        <div className="md:col-span-1 lg:col-span-1 space-y-4 order-1 md:order-2">
+                            <SidebarSectionSkeleton />
+                            <SidebarSectionSkeleton />
+                            <SidebarSectionSkeleton />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     if (error || !jam) {
@@ -139,10 +178,10 @@ export function JamDetailPage() {
         </div>)
     }
 
-    return (<div className="min-h-screen bg-gradient-to-br from-base-100 to-base-200">
+    return (<div className="min-h-screen bg-gradient-to-br from-base-100 to-base-200 animate-in fade-in duration-300">
         {/* Success Alert at Top - for Suggest */}
         {suggestSuccess && (
-            <div className="bg-success text-success-content sticky top-0 z-50">
+            <div className="bg-success text-success-content sticky top-0 z-50 animate-in fade-in duration-300">
                 <div className="container mx-auto max-w-4xl px-4 py-3 flex items-center justify-center gap-4">
                     <p className="font-semibold text-center flex-1">{suggestSuccess}</p>
                     <button onClick={() => setSuggestSuccess(null)} className="btn btn-ghost btn-sm flex-shrink-0">✕</button>
@@ -152,7 +191,7 @@ export function JamDetailPage() {
 
         {/* Success Alert at Top - for Enrollment */}
         {enrollSuccess && (
-            <div className="bg-info text-info-content sticky top-0 z-50">
+            <div className="bg-info text-info-content sticky top-0 z-50 animate-in fade-in duration-300">
                 <div className="container mx-auto max-w-4xl px-4 py-3 flex items-center justify-center gap-4">
                     <div className="flex items-center gap-2">
                         <span className="loading loading-spinner loading-sm"></span>
@@ -427,25 +466,43 @@ export function JamDetailPage() {
             <div className="modal-box w-11/12 max-w-sm">
                 <h3 className="font-bold text-base sm:text-lg mb-4">🎵 Suggest a Song</h3>
 
-                {suggestError && (<div className="alert alert-error mb-4">
+                {suggestError && (<div className="alert alert-error mb-4 animate-in fade-in duration-300">
                     <p>{suggestError}</p>
                 </div>)}
 
-                <div className="form-control mb-4">
-                    <label className="label">
-                        <span className="label-text">Select Song *</span>
-                    </label>
-                    <select
-                        value={selectedSongId}
-                        onChange={(e) => setSelectedSongId(e.target.value)}
-                        className="select select-bordered"
-                    >
-                        <option value="">Choose a song...</option>
-                        {allSongs.map((song) => (<option key={song.id} value={song.id}>
-                            {song.title} - {song.artist}
-                        </option>))}
-                    </select>
-                </div>
+                {suggestLoading && !allSongs.length && (
+                    <div className="mb-4">
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className="loading loading-spinner loading-sm"></span>
+                            <span className="text-sm text-base-content/70 font-semibold">Loading songs...</span>
+                        </div>
+                        <div className="form-control">
+                            <label className="label">
+                                <span className="label-text">Select Song *</span>
+                            </label>
+                            <div className="skeleton h-12 w-full rounded"></div>
+                        </div>
+                    </div>
+                )}
+
+                {!suggestLoading && (
+                    <div className="form-control mb-4">
+                        <label className="label">
+                            <span className="label-text">Select Song *</span>
+                        </label>
+                        <select
+                            value={selectedSongId}
+                            onChange={(e) => setSelectedSongId(e.target.value)}
+                            className="select select-bordered"
+                            disabled={suggestLoading}
+                        >
+                            <option value="">Choose a song...</option>
+                            {allSongs.map((song) => (<option key={song.id} value={song.id}>
+                                {song.title} - {song.artist}
+                            </option>))}
+                        </select>
+                    </div>
+                )}
 
                 <div className="text-sm text-base-content/70 mb-4 p-3 bg-base-200 rounded">
                     <p className="font-semibold mb-2">How it works:</p>

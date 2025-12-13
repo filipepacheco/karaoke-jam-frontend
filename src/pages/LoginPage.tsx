@@ -61,7 +61,10 @@ export function LoginPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-base-100">
-        <div className="loading loading-spinner loading-lg"></div>
+        <div className="flex flex-col items-center gap-3">
+          <span className="loading loading-spinner loading-lg"></span>
+          <span className="text-sm sm:text-base font-semibold text-base-content/70">Loading...</span>
+        </div>
       </div>
     )
   }
@@ -80,12 +83,12 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-100 p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-base-100 px-2 sm:px-4 py-4 sm:py-8">
+      <div className="w-full max-w-sm sm:max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">🎸 Jam Session</h1>
-          <p className="text-base-content/70">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3">The Jam App 🎸</h1>
+          <p className="text-xs sm:text-sm lg:text-base text-base-content/70">
             {useSupabase ? 'Sign in to your account with your email or social account' : 'Login or create your musician account'}
           </p>
         </div>
@@ -94,7 +97,7 @@ export function LoginPage() {
         {useSupabase ? <SupabaseLoginForm /> : <SimpleLoginForm />}
 
         {/* Footer Links */}
-        <div className="mt-8 text-center text-sm">
+        <div className="mt-6 sm:mt-8 text-center text-xs sm:text-sm">
           <a href="/" className="link link-hover text-primary">
             ← Back to Home
           </a>

@@ -8,7 +8,7 @@ import {useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {useAuth} from '../../hooks'
 import type {OAuthProvider} from '../../lib/supabase'
-import {providerIcons, providerLabels} from "../../lib/musicUtils.tsx";
+import OAuthButton from "./OAuthButton.tsx";
 
 interface SupabaseLoginFormProps {
   onSuccess?: () => void
@@ -98,6 +98,8 @@ export function SupabaseLoginForm({ onSuccess }: SupabaseLoginFormProps) {
   const isFormLoading = isLoading || authLoading
 
   return (
+      <div className="max-w-sm mx-auto">
+
       <fieldset className="fieldset border-base-300 rounded-box w-sm border p-4">
         <legend className="fieldset-legend  font-bold">{isSignUp ? 'Create Account' : 'Sign In'}</legend>
         {/* Email/Password Form */}
@@ -111,7 +113,7 @@ export function SupabaseLoginForm({ onSuccess }: SupabaseLoginFormProps) {
             <input
               type="text"
               placeholder="Your name"
-              className="input input-bordered"
+              className="input input-bordered w-full"
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={isFormLoading}
@@ -127,7 +129,7 @@ export function SupabaseLoginForm({ onSuccess }: SupabaseLoginFormProps) {
           <input
             type="email"
             placeholder="user@example.com"
-            className="input input-bordered"
+            className="input input-bordered w-full"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isFormLoading}
@@ -143,7 +145,7 @@ export function SupabaseLoginForm({ onSuccess }: SupabaseLoginFormProps) {
             <input
                 type="password"
                 placeholder="••••••••"
-                className="input input-bordered"
+                className="input input-bordered w-full"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isFormLoading}
@@ -198,23 +200,19 @@ export function SupabaseLoginForm({ onSuccess }: SupabaseLoginFormProps) {
           <div className="divider ">or</div>
 
           {/* OAuth Buttons */}
-          <div className="space-y-2 ">
-            <button
-                type="button"
-                className="btn bg-green w-full text-black border-[#e5e5e5]"
-                onClick={() => handleOAuthLogin('google')}
-                disabled={isFormLoading}
-            >
-              {providerIcons.google} Continue with {providerLabels.google}
-            </button>
-            <button
-                type="button"
-                className="btn bg-green w-full text-black border-[#e5e5e5]"
-                onClick={() => handleOAuthLogin('spotify')}
-                disabled={isFormLoading}
-            >
-              {providerIcons.spotify} Continue with {providerLabels.spotify}
-            </button>
+          <div className="space-y-2">
+            <OAuthButton
+              provider="google"
+              onClick={() => handleOAuthLogin('google')}
+              disabled={isFormLoading}
+              loading={isFormLoading}
+            />
+            <OAuthButton
+              provider="spotify"
+              onClick={() => handleOAuthLogin('spotify')}
+              disabled={isFormLoading}
+              loading={isFormLoading}
+            />
           </div>
 
         </form>
@@ -224,7 +222,7 @@ export function SupabaseLoginForm({ onSuccess }: SupabaseLoginFormProps) {
       <div className="text-center">
         <button
           type="button"
-          className="btn btn-ghost btn-sm"
+          className="btn btn-accent btn-sm"
           onClick={() => {
             setIsSignUp(!isSignUp)
             setError(null)
@@ -237,14 +235,16 @@ export function SupabaseLoginForm({ onSuccess }: SupabaseLoginFormProps) {
       </div>
 
       {/* Forgot Password Link */}
-      {!isSignUp && (
-        <div className="text-center ">
-          <a href="/forgot-password" className="link link-hover text-sm text-base-content/60">
-            Forgot password?
-          </a>
-        </div>
-      )}
+      {/*{!isSignUp && (*/}
+      {/*  // <div className="text-center ">*/}
+      {/*  //   <a href="/forgot-password" className="link link-hover text-sm text-base-content/60">*/}
+      {/*  //     Forgot password?*/}
+      {/*  //   </a>*/}
+      {/*  // </div>*/}
+      {/*)}*/}
     </fieldset>
+
+      </div>
   )
 }
 

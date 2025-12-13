@@ -1,4 +1,4 @@
-export { ScheduleCard } from './ScheduleCard'
+export { ScheduleCardManagement } from './ScheduleCardManagement.tsx'
 export { ScheduleStatusBadge } from './ScheduleStatusBadge'
 export { ScheduleActionButtons } from './ScheduleActionButtons'
 export { SongInfo } from './SongInfo'

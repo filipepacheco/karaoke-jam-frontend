@@ -7,9 +7,9 @@ function Hero() {
 
   const handleStartJam = () => {
     if (isAuthenticated && user?.isHost) {
-      navigate('/host/create-jam')
-    } else if (isAuthenticated) {
       navigate('/host/dashboard')
+    } else if (isAuthenticated) {
+      navigate('/jams')
     } else {
       navigate('/register')
     }
@@ -40,14 +40,14 @@ function Hero() {
               onClick={handleStartJam}
               className="btn btn-primary btn-sm sm:btn-md lg:btn-lg"
             >
-              Start Your First Jam
+              Join the Jam App
             </button>
-            <button
-              onClick={handleJoinMusician}
-              className="btn btn-outline btn-sm sm:btn-md lg:btn-lg text-white border-white hover:bg-white hover:text-black"
-            >
-              Join as Musician
-            </button>
+            {/*<button*/}
+            {/*  onClick={handleJoinMusician}*/}
+            {/*  className="btn btn-outline btn-sm sm:btn-md lg:btn-lg text-white border-white hover:bg-white hover:text-black"*/}
+            {/*>*/}
+            {/*  Join as Musician*/}
+            {/*</button>*/}
           </div>
         </div>
       </div>
